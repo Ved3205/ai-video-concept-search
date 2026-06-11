@@ -4,22 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
-
-
-def create_embedding(text_list):
-    r = requests.post(
-        "http://localhost:11434/api/embed",
-        json={
-            "model": "bge-m3",
-            "input": text_list
-        },
-        timeout=120
-    )
-
-    r.raise_for_status()
-
-    return r.json()["embeddings"]
-
+import joblib
 
 jsons = sorted(
     os.listdir("jsons"),
@@ -57,37 +42,5 @@ df = pd.DataFrame.from_records(my_dicts)
 
 print(f"\nLoaded {len(df)} chunks")
 
-while True:
-
-    incoming_query = input("\nAsk a Question (or type exit): ")
-
-    if incoming_query.lower() == "exit":
-        break
-
-    question_embedding = create_embedding(
-        [incoming_query]
-    )[0]
-
-    similarities = cosine_similarity(
-        np.vstack(df["embedding"]),
-        [question_embedding]
-    ).flatten()
-
-    top_results = 3
-
-    max_index = similarities.argsort()[::-1][:top_results]
-
-    new_df = df.iloc[max_index]
-
-    print("\nTop Matching Chunks:\n")
-
-    for rank, (_, row) in enumerate(new_df.iterrows(), start=1):
-
-        print(f"Rank #{rank}")
-        print(f"Similarity : {similarities[row.name]:.4f}")
-        print(f"Title      : {row['title']}")
-        print(f"Number     : {row['number']}")
-        print(f"Start      : {row['start']}")
-        print(f"End        : {row['end']}")
-        print(f"Text       : {row['text']}")
-        print("-" * 100)
+# Save this dataframe
+joblib.dump(df, "embeddings.joblib")
