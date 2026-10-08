@@ -21,7 +21,7 @@
 | Name                | Enrollment Number    |
 | ------------------- | -------------------- |
 | Vednarayan Hiralkar | BT23F05F028          |
-| Aryan Shastri       | BT23F05F028          |
+| Aryan Shastri       | BT23F05F060          |
 
 
 ---
